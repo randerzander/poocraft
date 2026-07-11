@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Poocraft</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="game-shell">
+      <header class="topbar">
+        <div>
+          <h1>Poocraft</h1>
+          <p>Mine dirt. Find poop. Build a very questionable empire.</p>
+        </div>
+        <div class="stats" aria-label="Inventory">
+          <span><strong id="poopCount">0</strong> poop</span>
+          <span><strong id="dirtCount">0</strong> dirt</span>
+        </div>
+      </header>
+
+      <section class="stage">
+        <canvas id="world" width="960" height="576" aria-label="Poocraft game world"></canvas>
+        <aside class="panel">
+          <div class="tool-row" role="group" aria-label="Tools">
+            <button class="tool is-active" data-tool="mine" type="button" title="Mine block">⛏</button>
+            <button class="tool" data-tool="place" type="button" title="Place block">▣</button>
+          </div>
+
+          <div class="palette" role="group" aria-label="Blocks">
+            <button class="block-choice is-active" data-block="poop" type="button">
+              <span class="swatch swatch-poop"></span>
+              Poop
+            </button>
+            <button class="block-choice" data-block="dirt" type="button">
+              <span class="swatch swatch-dirt"></span>
+              Dirt
+            </button>
+          </div>
+
+          <div class="meters">
+            <label>
+              Stink
+              <meter id="stinkMeter" min="0" max="100" value="0"></meter>
+            </label>
+          </div>
+
+          <button id="reset" class="reset" type="button">New Dumb World</button>
+        </aside>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
