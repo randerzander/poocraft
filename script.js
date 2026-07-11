@@ -6,6 +6,7 @@ const stinkMeter = document.querySelector("#stinkMeter");
 const toolButtons = [...document.querySelectorAll("[data-tool]")];
 const blockButtons = [...document.querySelectorAll("[data-block]")];
 const resetButton = document.querySelector("#reset");
+const usernameInput = document.querySelector("#username");
 
 const tile = 32;
 const cols = canvas.width / tile;
@@ -23,6 +24,37 @@ const blocks = {
   stone: { top: "#8d8c88", side: "#686762", fleck: "#4f4e4b" },
   poop: { top: "#7b4a28", side: "#56311c", fleck: "#2f1b10" }
 };
+
+function randomUsername() {
+  return `Miner-${Math.floor(1000 + Math.random() * 9000)}`;
+}
+
+function loadUsername() {
+  const saved = localStorage.getItem("poocraftUsername");
+  usernameInput.value = saved || randomUsername();
+  localStorage.setItem("poocraftUsername", usernameInput.value);
+}
+
+function currentUsername() {
+  const username = usernameInput.value.trim() || randomUsername();
+  if (username !== usernameInput.value) usernameInput.value = username;
+  localStorage.setItem("poocraftUsername", username);
+  return username;
+}
+
+function recordBlockEvent(action, block, x, y) {
+  fetch("/api/block-events", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      username: currentUsername(),
+      action,
+      block,
+      x,
+      y
+    })
+  }).catch(() => {});
+}
 
 function makeWorld() {
   inventory.poop = 3;
@@ -133,10 +165,12 @@ function handleCanvasClick(event) {
       if (current === "grass") inventory.dirt += 1;
       if (current === "stone" && Math.random() < 0.2) inventory.poop += 1;
       world[y][x] = "air";
+      recordBlockEvent("mine", current, x, y);
     }
   } else if (current === "air" && inventory[activeBlock] > 0) {
     inventory[activeBlock] -= 1;
     world[y][x] = activeBlock;
+    recordBlockEvent("place", activeBlock, x, y);
   }
   updateHud();
 }
@@ -159,6 +193,9 @@ blockButtons.forEach((button) => {
 
 resetButton.addEventListener("click", makeWorld);
 canvas.addEventListener("click", handleCanvasClick);
+usernameInput.addEventListener("change", currentUsername);
+usernameInput.addEventListener("blur", currentUsername);
 
+loadUsername();
 makeWorld();
 draw();

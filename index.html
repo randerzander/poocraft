@@ -22,6 +22,11 @@
       <section class="stage">
         <canvas id="world" width="960" height="576" aria-label="Poocraft game world"></canvas>
         <aside class="panel">
+          <label class="username-field">
+            Player
+            <input id="username" name="username" maxlength="32" autocomplete="nickname">
+          </label>
+
           <div class="tool-row" role="group" aria-label="Tools">
             <button class="tool is-active" data-tool="mine" type="button" title="Mine block">⛏</button>
             <button class="tool" data-tool="place" type="button" title="Place block">▣</button>
