@@ -8,6 +8,7 @@ const blockButtons = [...document.querySelectorAll("[data-block]")];
 const resetButton = document.querySelector("#reset");
 const usernameInput = document.querySelector("#username");
 const playerStatsEl = document.querySelector("#playerStats");
+const statsRefreshMs = 3000;
 
 const tile = 32;
 const cols = canvas.width / tile;
@@ -236,5 +237,6 @@ usernameInput.addEventListener("blur", currentUsername);
 
 loadUsername();
 loadPlayerStats();
+setInterval(loadPlayerStats, statsRefreshMs);
 makeWorld();
 draw();
