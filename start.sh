@@ -3,6 +3,7 @@ set -euo pipefail
 
 export SQLITE_PATH="${SQLITE_PATH:-$PWD/poocraft.sqlite3}"
 export R2_PATH="${R2_PATH:-poocraft/poocraft.sqlite3}"
+export R2_SECRET_ACCESS_KEY="${R2_SECRET_ACCESS_KEY:-${R2_SECRET_KEY:-}}"
 
 required_vars=(R2_ACCOUNT_ID R2_BUCKET R2_ACCESS_KEY_ID R2_SECRET_ACCESS_KEY)
 litestream_ready=true
