@@ -4,7 +4,7 @@ import sqlite3
 from datetime import datetime, timezone
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 
-DB_PATH = os.environ.get("SQLITE_PATH", "poocraft.sqlite3")
+DB_PATH = os.path.abspath(os.environ.get("SQLITE_PATH", "poocraft.sqlite3"))
 
 
 def init_db():
