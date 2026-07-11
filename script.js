@@ -7,6 +7,7 @@ const toolButtons = [...document.querySelectorAll("[data-tool]")];
 const blockButtons = [...document.querySelectorAll("[data-block]")];
 const resetButton = document.querySelector("#reset");
 const usernameInput = document.querySelector("#username");
+const playerStatsEl = document.querySelector("#playerStats");
 
 const tile = 32;
 const cols = canvas.width / tile;
@@ -53,7 +54,44 @@ function recordBlockEvent(action, block, x, y) {
       x,
       y
     })
-  }).catch(() => {});
+  })
+    .then((response) => {
+      if (response.ok) loadPlayerStats();
+    })
+    .catch(() => {});
+}
+
+function renderPlayerStats(players) {
+  if (!players.length) {
+    playerStatsEl.innerHTML = "<p>No blocks logged yet.</p>";
+    return;
+  }
+
+  playerStatsEl.replaceChildren(
+    ...players.map((player) => {
+      const row = document.createElement("div");
+      row.className = "player-stat";
+
+      const name = document.createElement("strong");
+      name.textContent = player.username;
+
+      const counts = document.createElement("span");
+      counts.textContent = `${player.mined} mined / ${player.placed} placed`;
+
+      row.append(name, counts);
+      return row;
+    })
+  );
+}
+
+function loadPlayerStats() {
+  fetch("/api/player-stats")
+    .then((response) => {
+      if (!response.ok) throw new Error("Could not load player stats");
+      return response.json();
+    })
+    .then((data) => renderPlayerStats(data.players || []))
+    .catch(() => {});
 }
 
 function makeWorld() {
@@ -197,5 +235,6 @@ usernameInput.addEventListener("change", currentUsername);
 usernameInput.addEventListener("blur", currentUsername);
 
 loadUsername();
+loadPlayerStats();
 makeWorld();
 draw();

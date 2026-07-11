@@ -52,6 +52,26 @@ def save_block_event(event):
     return {"id": cursor.lastrowid, "timestamp": timestamp}
 
 
+def get_player_stats():
+    with sqlite3.connect(DB_PATH) as connection:
+        rows = connection.execute(
+            """
+            SELECT
+                username,
+                SUM(CASE WHEN action = 'mine' THEN 1 ELSE 0 END) AS mined,
+                SUM(CASE WHEN action = 'place' THEN 1 ELSE 0 END) AS placed
+            FROM block_events
+            GROUP BY username
+            ORDER BY mined + placed DESC, username COLLATE NOCASE ASC
+            LIMIT 25
+            """
+        ).fetchall()
+    return [
+        {"username": username, "mined": mined or 0, "placed": placed or 0}
+        for username, mined, placed in rows
+    ]
+
+
 def clean_text(value, max_length):
     if not isinstance(value, str):
         return ""
@@ -65,6 +85,12 @@ class StaticHandler(SimpleHTTPRequestHandler):
         ".css": "text/css",
         ".html": "text/html",
     }
+
+    def do_GET(self):
+        if self.path == "/api/player-stats":
+            self.send_json({"players": get_player_stats()})
+            return
+        super().do_GET()
 
     def do_POST(self):
         if self.path != "/api/block-events":
